@@ -89,7 +89,7 @@ RCT_EXPORT_METHOD(initChat:(NSString *)key) {
 }
 
 RCT_EXPORT_METHOD(setPrimaryColor:(NSString *)color) {
-  [ZDKCommonTheme currentTheme].primaryColor = [self colorFromHexString:color];
+  [ZDKCommonTheme currentTheme].primaryColor = [UIColor colorWithRed: 0.00 green: 0.21 blue: 0.64 alpha: 1.00];
 }
 
 - (UIColor *)colorFromHexString:(NSString *)hexString {
