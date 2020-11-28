@@ -20,6 +20,8 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
 
 import java.lang.String;
+import java.lang.Long;
+import java.util.*;
 
 import javax.annotation.Nullable;
 import zendesk.chat.Chat;
@@ -43,6 +45,10 @@ import zendesk.support.Support;
 import zendesk.support.guide.HelpCenterActivity;
 import zendesk.support.guide.ViewArticleActivity;
 import zendesk.support.requestlist.RequestListActivity;
+import zendesk.support.request.RequestActivity;
+
+import zendesk.support.CustomField;
+
 import zendesk.answerbot.AnswerBot;
 import zendesk.answerbot.AnswerBotEngine;
 import zendesk.support.SupportEngine;
@@ -102,12 +108,12 @@ public class RNZendeskChat extends ReactContextBaseJavaModule {
         String appId = options.getString("appId");
         String clientId = options.getString("clientId");
         String url = options.getString("url");
-        String key = options.getString("key");
+        // String key = options.getString("key");
         Context context = appContext;
         Zendesk.INSTANCE.init(context, url, appId, clientId);
         Support.INSTANCE.init(Zendesk.INSTANCE);
         AnswerBot.INSTANCE.init(Zendesk.INSTANCE, Support.INSTANCE);
-        Chat.INSTANCE.init(context, key);
+        // Chat.INSTANCE.init(context, key);
     }
 
     @ReactMethod
@@ -127,7 +133,7 @@ public class RNZendeskChat extends ReactContextBaseJavaModule {
           Identity identity = new AnonymousIdentity.Builder()
                   .withNameIdentifier(name).withEmailIdentifier(email).build();
           Zendesk.INSTANCE.setIdentity(identity);
-        }   
+        }
     }
 
     @ReactMethod
@@ -146,9 +152,55 @@ public class RNZendeskChat extends ReactContextBaseJavaModule {
                                                  .withContactUsButtonVisible(false)
                                                  .config());
         } else {
-            HelpCenterActivity.builder()
-             .show(activity);
+          CustomField customFieldOne = new CustomField(360033102052L, "3");
+
+
+            HelpCenterActivity
+            .builder()
+            .withContactUsButtonVisible(false)
+            .show(activity, RequestActivity.builder().withTicketForm(360000986391L, Arrays.asList(customFieldOne)).config());
         }
+    }
+
+    @ReactMethod
+    public void openTicketList(){
+      Activity activity = getCurrentActivity();
+
+      RequestListActivity.builder().show(activity);
+    }
+
+    // - endereço de e-mail* -
+    // - nome completo* -
+    // - motivo (abrindo submotivo)
+    // - assunto
+    // - descrição
+    // - CPF/CNPJ* -
+    // - telefone para contato* -
+    // - número do contrato* -
+    // - anexos
+
+    @ReactMethod
+    public void openTicket(ReadableMap info) {
+      Activity activity = getCurrentActivity();
+
+      String phone = info.getString("phone");
+      String contractNumber = info.getString("contract_number");
+      String email = info.getString("email");
+      String name = info.getString("name");
+      String motive = info.getString("motive");
+      String document = info.getString("document");
+      Long subMotiveLongField = Long.valueOf(info.getString("submotiveField"));
+      String submotive = info.getString("submotive");
+
+      CustomField phoneField = new CustomField(360033143751L, phone);
+      CustomField contractNumberField = new CustomField(360033057132L, contractNumber);
+      CustomField emailField = new CustomField(360034437452L, email);
+      CustomField nameField = new CustomField(360033143911L, name);
+      CustomField motiveField = new CustomField(360033095651L, motive);
+      CustomField documentField = new CustomField(360033102052L, document);
+      // CustomField submotiveField = new CustomField(subMotiveLongField, submotive);
+
+      RequestActivity.builder().withTicketForm(360000986391L, Arrays.asList(phoneField, contractNumberField, emailField, nameField, motiveField, documentField)).show(activity);
     }
 
     @ReactMethod
@@ -174,6 +226,6 @@ public class RNZendeskChat extends ReactContextBaseJavaModule {
                     .withEngines(AnswerBotEngine.engine(), ChatEngine.engine(), SupportEngine.engine())
                     .show(activity, chatConfiguration);
         }
-      
+
     }
 }
