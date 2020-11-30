@@ -26,7 +26,7 @@ RCT_EXPORT_METHOD(setVisitorInfo:(NSDictionary *)options) {
                                                 email:options[@"email"]
                                                 phoneNumber:options[@"phone"]];
   ZDKChat.instance.configuration = config;
-  
+
   NSLog(@"Setting visitor info: department: %@ tags: %@, email: %@, name: %@, phone: %@", config.department, config.tags, config.visitorInfo.email, config.visitorInfo.name, config.visitorInfo.phoneNumber);
 }
 
@@ -88,8 +88,57 @@ RCT_EXPORT_METHOD(initChat:(NSString *)key) {
   [ZDKChat initializeWithAccountKey:key queue:dispatch_get_main_queue()];
 }
 
+RCT_EXPORT_METHOD(openTicket:(NSDictionary *)options){
+    dispatch_async(dispatch_get_main_queue(), ^{
+
+      ZDKCustomField *phoneField = [[ZDKCustomField alloc] initWithFieldId:@360033143751 value:options[@"phone"]];
+      ZDKCustomField *contractNumberField = [[ZDKCustomField alloc] initWithFieldId:@360033057132 value:options[@"contract_number"]];
+      ZDKCustomField *emailField = [[ZDKCustomField alloc] initWithFieldId:@360034437452 value:options[@"email"]];
+      ZDKCustomField *nameField = [[ZDKCustomField alloc] initWithFieldId:@360033143911 value:options[@"name"]];
+      ZDKCustomField *motiveField = [[ZDKCustomField alloc] initWithFieldId:@360033095651 value:options[@"motive"]];
+      ZDKCustomField *documentField = [[ZDKCustomField alloc] initWithFieldId:@360033102052 value:options[@"document"]];
+      ZDKCustomField *submotiveField = [[ZDKCustomField alloc] initWithFieldId:options[@"submotiveField"] value:options[@"submotive"]];
+
+      ZDKRequestUiConfiguration * config = [ZDKRequestUiConfiguration new];
+
+      config.customFields =  @[phoneField,
+                       contractNumberField,
+                       emailField,
+                       nameField,
+                       motiveField,
+                       submotiveField,
+                       documentField];
+
+      UIViewController *requestController = [ZDKRequestUi buildRequestUiWith:@[config]];
+      UIViewController *nav = [[UINavigationController alloc] initWithRootViewController:requestController];
+
+      UIWindow *window=[UIApplication sharedApplication].keyWindow;
+      UIViewController *vc = [window rootViewController];
+      [vc presentViewController:nav animated:true completion:nil];
+
+    });
+}
+
+
 RCT_EXPORT_METHOD(setPrimaryColor:(NSString *)color) {
   [ZDKCommonTheme currentTheme].primaryColor = [UIColor colorWithRed: 0.00 green: 0.21 blue: 0.64 alpha: 1.00];
+}
+
+RCT_EXPORT_METHOD(openTicketList){
+    dispatch_async(dispatch_get_main_queue(), ^{
+
+        ZDKRequestListUiConfiguration * config = [ZDKRequestListUiConfiguration new];
+
+        config.allowRequestCreation = NO;
+
+        UIViewController *requestScreen = [ZDKRequestUi buildRequestListWith:@[config]];
+        UIViewController *nav = [[UINavigationController alloc] initWithRootViewController:requestScreen];
+
+        UIWindow *window=[UIApplication sharedApplication].keyWindow;
+        UIViewController *vc = [window rootViewController];
+        [vc presentViewController:nav animated:true completion:nil];
+
+    });
 }
 
 - (UIColor *)colorFromHexString:(NSString *)hexString {
@@ -158,7 +207,7 @@ RCT_EXPORT_METHOD(setPrimaryColor:(NSString *)color) {
       engines = @[
         (id <ZDKEngine>) [ZDKAnswerBotEngine engineAndReturnError:&error],
         (id <ZDKEngine>) [ZDKChatEngine engineAndReturnError:&error],
-        (id <ZDKEngine>) [ZDKSupportEngine engineAndReturnError:&error], 
+        (id <ZDKEngine>) [ZDKSupportEngine engineAndReturnError:&error],
       ];
     }
     ZDKChatConfiguration *chatConfiguration = [[ZDKChatConfiguration alloc] init];
