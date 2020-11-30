@@ -21,6 +21,7 @@ import com.facebook.react.bridge.ReadableMap;
 
 import java.lang.String;
 import java.lang.Long;
+import java.lang.Double;
 import java.util.*;
 
 import javax.annotation.Nullable;
@@ -169,16 +170,6 @@ public class RNZendeskChat extends ReactContextBaseJavaModule {
       RequestListActivity.builder().show(activity);
     }
 
-    // - endereço de e-mail* -
-    // - nome completo* -
-    // - motivo (abrindo submotivo)
-    // - assunto
-    // - descrição
-    // - CPF/CNPJ* -
-    // - telefone para contato* -
-    // - número do contrato* -
-    // - anexos
-
     @ReactMethod
     public void openTicket(ReadableMap info) {
       Activity activity = getCurrentActivity();
@@ -198,9 +189,9 @@ public class RNZendeskChat extends ReactContextBaseJavaModule {
       CustomField nameField = new CustomField(360033143911L, name);
       CustomField motiveField = new CustomField(360033095651L, motive);
       CustomField documentField = new CustomField(360033102052L, document);
-      // CustomField submotiveField = new CustomField(subMotiveLongField, submotive);
+      CustomField submotiveField = new CustomField(subMotiveLongField, submotive);
 
-      RequestActivity.builder().withTicketForm(360000986391L, Arrays.asList(phoneField, contractNumberField, emailField, nameField, motiveField, documentField)).show(activity);
+      RequestActivity.builder().withTicketForm(360000986391L, Arrays.asList(phoneField, contractNumberField, emailField, nameField, motiveField, documentField, submotiveField)).show(activity);
     }
 
     @ReactMethod
