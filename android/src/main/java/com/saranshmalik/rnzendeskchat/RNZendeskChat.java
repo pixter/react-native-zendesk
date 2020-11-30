@@ -155,11 +155,14 @@ public class RNZendeskChat extends ReactContextBaseJavaModule {
         } else {
           CustomField customFieldOne = new CustomField(360033102052L, "3");
 
-
             HelpCenterActivity
-            .builder()
-            .withContactUsButtonVisible(false)
-            .show(activity, RequestActivity.builder().withTicketForm(360000986391L, Arrays.asList(customFieldOne)).config());
+              .builder()
+              .withContactUsButtonVisible(false)
+              .show(activity, RequestActivity
+                .builder()
+                .withTicketForm(360000986391L, Arrays.asList(customFieldOne))
+                .config()
+              );
         }
     }
 
@@ -167,7 +170,10 @@ public class RNZendeskChat extends ReactContextBaseJavaModule {
     public void openTicketList(){
       Activity activity = getCurrentActivity();
 
-      RequestListActivity.builder().show(activity);
+      RequestListActivity
+        .builder()
+        .withContactUsButtonVisible(false)
+        .show(activity);
     }
 
     @ReactMethod
@@ -180,7 +186,7 @@ public class RNZendeskChat extends ReactContextBaseJavaModule {
       String name = info.getString("name");
       String motive = info.getString("motive");
       String document = info.getString("document");
-      Long subMotiveLongField = Long.valueOf(info.getString("submotiveField"));
+      Long subMotiveLongField = (long)info.getDouble("submotiveField");
       String submotive = info.getString("submotive");
 
       CustomField phoneField = new CustomField(360033143751L, phone);
