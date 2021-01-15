@@ -1,9 +1,6 @@
-
 package com.saranshmalik.rnzendeskchat;
-
 import android.app.Activity;
 import android.content.Context;
-
 import android.graphics.Color;
 import android.os.Build;
 import androidx.core.content.ContextCompat;
@@ -12,18 +9,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
-
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
-
 import java.lang.String;
 import java.lang.Long;
 import java.lang.Double;
 import java.util.*;
-
 import javax.annotation.Nullable;
 import zendesk.chat.Chat;
 import zendesk.chat.ChatConfiguration;
@@ -47,31 +41,23 @@ import zendesk.support.guide.HelpCenterActivity;
 import zendesk.support.guide.ViewArticleActivity;
 import zendesk.support.requestlist.RequestListActivity;
 import zendesk.support.request.RequestActivity;
-
 import zendesk.support.CustomField;
-
 import zendesk.answerbot.AnswerBot;
 import zendesk.answerbot.AnswerBotEngine;
 import zendesk.support.SupportEngine;
-
 public class RNZendeskChat extends ReactContextBaseJavaModule {
-
   private ReactContext appContext;
   private static final String TAG = "ZendeskChat";
-
   public RNZendeskChat(ReactApplicationContext reactContext) {
         super(reactContext);
         appContext = reactContext;
   }
-
   @Override
   public String getName() {
     return "RNZendeskChat";
   }
-
   @ReactMethod
     public void setVisitorInfo(ReadableMap options) {
-
         Providers providers = Chat.INSTANCE.providers();
         if (providers == null) {
             Log.d(TAG, "Can't set visitor info, provider is null");
@@ -101,9 +87,7 @@ public class RNZendeskChat extends ReactContextBaseJavaModule {
         profileProvider.setVisitorInfo(visitorInfo, null);
         if (options.hasKey("department"))
             chatProvider.setDepartment(options.getString("department"), null);
-
     }
-
     @ReactMethod
     public void init(ReadableMap options) {
         String appId = options.getString("appId");
@@ -116,13 +100,11 @@ public class RNZendeskChat extends ReactContextBaseJavaModule {
         AnswerBot.INSTANCE.init(Zendesk.INSTANCE, Support.INSTANCE);
         // Chat.INSTANCE.init(context, key);
     }
-
     @ReactMethod
     public void initChat(String key) {
         Context context = appContext;
         Chat.INSTANCE.init(context, key);
     }
-
     @ReactMethod
     public void setUserIdentity(ReadableMap options) {
         if (options.hasKey("token")) {
@@ -136,7 +118,6 @@ public class RNZendeskChat extends ReactContextBaseJavaModule {
           Zendesk.INSTANCE.setIdentity(identity);
         }
     }
-
     @ReactMethod
     public void showHelpCenter(ReadableMap options) {
         String botName = options.hasKey("botName") ? options.getString("botName") : "Chat Bot";
@@ -154,7 +135,6 @@ public class RNZendeskChat extends ReactContextBaseJavaModule {
                                                  .config());
         } else {
           CustomField customFieldOne = new CustomField(360033102052L, "3");
-
             HelpCenterActivity
               .builder()
               .withContactUsButtonVisible(false)
@@ -165,21 +145,17 @@ public class RNZendeskChat extends ReactContextBaseJavaModule {
               );
         }
     }
-
     @ReactMethod
     public void openTicketList(){
       Activity activity = getCurrentActivity();
-
       RequestListActivity
         .builder()
         .withContactUsButtonVisible(false)
         .show(activity);
     }
-
     @ReactMethod
     public void openTicket(ReadableMap info) {
       Activity activity = getCurrentActivity();
-
       String phone = info.getString("phone");
       String contractNumber = info.getString("contract_number");
       String email = info.getString("email");
@@ -187,19 +163,18 @@ public class RNZendeskChat extends ReactContextBaseJavaModule {
       String motive = info.getString("motive");
       String document = info.getString("document");
       Long subMotiveLongField = (long)info.getDouble("submotiveField");
+      Long motiveFieldID = (long)info.getDouble("motiveFieldID");
       String submotive = info.getString("submotive");
-
+      
       CustomField phoneField = new CustomField(360033143751L, phone);
       CustomField contractNumberField = new CustomField(360033057132L, contractNumber);
       CustomField emailField = new CustomField(360034437452L, email);
       CustomField nameField = new CustomField(360033143911L, name);
-      CustomField motiveField = new CustomField(360033095651L, motive);
+      CustomField motiveField = new CustomField(motiveFieldID, motive);
       CustomField documentField = new CustomField(360033102052L, document);
       CustomField submotiveField = new CustomField(subMotiveLongField, submotive);
-
-      RequestActivity.builder().withTicketForm(360000986391L, Arrays.asList(phoneField, contractNumberField, emailField, nameField, motiveField, documentField, submotiveField)).show(activity);
+      RequestActivity.builder().withCustomFields(Arrays.asList(phoneField, contractNumberField, emailField, nameField, motiveField, documentField, submotiveField)).show(activity);
     }
-
     @ReactMethod
     public void startChat(ReadableMap options) {
         Providers providers = Chat.INSTANCE.providers();
@@ -210,7 +185,6 @@ public class RNZendeskChat extends ReactContextBaseJavaModule {
                 .withAgentAvailabilityEnabled(true)
                 .withOfflineFormEnabled(true)
                 .build();
-
         Activity activity = getCurrentActivity();
         if (options.hasKey("chatOnly")) {
            MessagingActivity.builder()
@@ -223,6 +197,5 @@ public class RNZendeskChat extends ReactContextBaseJavaModule {
                     .withEngines(AnswerBotEngine.engine(), ChatEngine.engine(), SupportEngine.engine())
                     .show(activity, chatConfiguration);
         }
-
     }
 }

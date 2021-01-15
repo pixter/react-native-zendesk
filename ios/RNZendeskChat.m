@@ -95,7 +95,7 @@ RCT_EXPORT_METHOD(openTicket:(NSDictionary *)options){
       ZDKCustomField *contractNumberField = [[ZDKCustomField alloc] initWithFieldId:@360033057132 value:options[@"contract_number"]];
       ZDKCustomField *emailField = [[ZDKCustomField alloc] initWithFieldId:@360034437452 value:options[@"email"]];
       ZDKCustomField *nameField = [[ZDKCustomField alloc] initWithFieldId:@360033143911 value:options[@"name"]];
-      ZDKCustomField *motiveField = [[ZDKCustomField alloc] initWithFieldId:@360033095651 value:options[@"motive"]];
+      ZDKCustomField *motiveField = [[ZDKCustomField alloc] initWithFieldId:options[@"motiveFieldID"] value:options[@"motive"]];
       ZDKCustomField *documentField = [[ZDKCustomField alloc] initWithFieldId:@360033102052 value:options[@"document"]];
       ZDKCustomField *submotiveField = [[ZDKCustomField alloc] initWithFieldId:options[@"submotiveField"] value:options[@"submotive"]];
 
